@@ -7,14 +7,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Use self-hosted runner
+    runs-on: self-hosted  # Use self-hosted EC2 runner
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Deploy to EC2
+      - name: Copy Code to EC2
         run: |
-          rm -rf /var/www/myapp
-          cp -r build /var/www/myapp
-          sudo systemctl restart nginx  # Assuming Nginx is used for hosting
+          rm -rf /home/ubuntu/myapp
+          mkdir -p /home/ubuntu/myapp
+          cp -r . /home/ubuntu/myapp
