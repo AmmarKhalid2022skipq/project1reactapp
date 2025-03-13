@@ -13,8 +13,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy Code to EC2
+      - name: Install Node.js & Dependencies
         run: |
-          rm -rf /home/ubuntu/myapp
-          mkdir -p /home/ubuntu/myapp
-          cp -r . /home/ubuntu/myapp
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt install -y nodejs
+          npm install
+
+      - name: Build React App
+        run: npm run build
+
+      - name: Copy Build Files to Nginx Directory
+        run: |
+          sudo rm -rf /var/www/myapp
+          sudo cp -r build/* /var/www/myapp
+
+      - name: Restart Nginx
+        run: sudo systemctl restart nginx
