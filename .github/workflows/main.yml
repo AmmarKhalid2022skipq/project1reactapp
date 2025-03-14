@@ -7,13 +7,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Use self-hosted EC2 runner
+    runs-on: self-hosted  # Ensure this runner is on EC2
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Copy Code to EC2
+      - name: Deploy Code to Target Directory
         run: |
-      
-          cp -r . /home/ubuntu/
+          sudo rm -rf /home/ubuntu/myapp
+          mkdir -p /home/ubuntu/myapp
+          rsync -av --exclude='.git' ./ /home/ubuntu/myapp/
