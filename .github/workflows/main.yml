@@ -1,4 +1,4 @@
-name: Deploy React App with Docker & Nginx
+name: Deploy to Amazon ECR
 
 on:
   push:
@@ -7,32 +7,31 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted  # Ensure the runner is installed on EC2
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-      - name: Deploy Code to Target Directory
-        run: |
-          sudo rm -rf /home/ubuntu/myapp
-          mkdir -p /home/ubuntu/myapp
-          rsync -av --exclude='.git' ./ /home/ubuntu/myapp/
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ secrets.AWS_REGION }}
 
-      - name: Build Docker Image
-        run: |
-          cd /home/ubuntu/myapp/myapp
-          sudo docker build -t my-react-app .
+    - name: Authenticate with ECR
+      id: login-ecr
+      run: |
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654483947.dkr.ecr.us-east-1.amazonaws.com
 
-      - name: Stop and Remove Existing Container (if running)
-        run: |
-          sudo docker stop my-react-container || true
-          sudo docker rm my-react-container || true
+    - name: Build and Tag Docker Image
+      run: |
+        docker build -t ${{ secrets.ECR_REPOSITORY }}:latest .
+        docker tag ${{ secrets.ECR_REPOSITORY }}:latest ${{ secrets.ECR_REPOSITORY }}:latest
 
-      - name: Run Docker Container
-        run: |
-          sudo docker run -d --name my-react-container -p 3000:3000 my-react-app
+    - name: Push Image to Amazon ECR
+      run: |
+        docker push ${{ secrets.ECR_REPOSITORY }}:latest
 
-      - name: Restart Nginx
-        run: |
-          sudo systemctl restart nginx
+
