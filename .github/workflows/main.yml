@@ -40,4 +40,4 @@ jobs:
 
     - name: Push Image to Amazon ECR
       run: |
-        sudo docker push 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
+        sudo docker push 654654483947.dkr.ecr.us-east-1.amazonaws.com/ammar/devops:latest
