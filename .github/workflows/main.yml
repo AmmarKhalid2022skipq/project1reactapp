@@ -13,8 +13,14 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
+    - name: Deploy Code to Target Directory
+      run: |
+        sudo rm -rf /home/ubuntu/myapp
+        mkdir -p /home/ubuntu/myapp
+        rsync -av --exclude='.git' ./ /home/ubuntu/myapp/
+
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v2
+      uses: aws-actions/configure-aws-credentials@v3
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -23,15 +29,13 @@ jobs:
     - name: Authenticate with ECR
       id: login-ecr
       run: |
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654483947.dkr.ecr.us-east-1.amazonaws.com
+        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
 
     - name: Build and Tag Docker Image
       run: |
         docker build -t ammar/devops .
-        docker tag ammar/devops:latest 654654483947.dkr.ecr.us-east-1.amazonaws.com/ammar/devops:latest
+        docker tag ammar/devops:latest 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
 
     - name: Push Image to Amazon ECR
       run: |
-        docker push 654654483947.dkr.ecr.us-east-1.amazonaws.com/ammar/devops:latest
-
-
+        docker push 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
