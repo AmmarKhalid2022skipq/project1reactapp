@@ -33,6 +33,7 @@ jobs:
     - name: Build Docker image
       run: |
         cd /home/ubuntu/myapp/myapp
+        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654483947.dkr.ecr.us-east-1.amazonaws.com
         sudo docker build -t ammar/devops .
 
     - name: Push image to Amazon ECR
