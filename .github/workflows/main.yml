@@ -35,9 +35,9 @@ jobs:
       run: |
         cd /home/ubuntu/myapp/myapp  # Ensure correct directory
 
-        docker build -t ammar/devops .
-        docker tag ammar/devops:latest 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
+        sudo docker build -t ammar/devops .
+        sudo docker tag ammar/devops:latest 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
 
     - name: Push Image to Amazon ECR
       run: |
-        docker push 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
+        sudo docker push 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
