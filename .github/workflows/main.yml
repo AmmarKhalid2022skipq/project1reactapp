@@ -26,19 +26,15 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ secrets.AWS_REGION }}
 
-    - name: Authenticate with ECR
+    - name: Login to Amazon ECR
       id: login-ecr
-      run: |
-        aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      uses: aws-actions/amazon-ecr-login@v1
 
-    - name: Build and Tag Docker Image
+    - name: Build Docker image
       run: |
-        cd /home/ubuntu/myapp/myapp  # Ensure correct directory
+        cd /home/ubuntu/myapp/myapp
+        sudo docker build -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest .
 
-        sudo docker build -t ammar/devops .
-        sudo docker tag ammar/devops:latest 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
-
-    - name: Push Image to Amazon ECR
+    - name: Push image to Amazon ECR
       run: |
-        aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 654654483947.dkr.ecr.us-east-1.amazonaws.com
-        sudo docker push 654654483947.dkr.ecr.us-east-1.amazonaws.com/ammar/devops:latest
+        sudo docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/${{ secrets.ECR_REPOSITORY }}:latest
