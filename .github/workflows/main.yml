@@ -33,6 +33,8 @@ jobs:
 
     - name: Build and Tag Docker Image
       run: |
+        cd /home/ubuntu/myapp/myapp  # Ensure correct directory
+
         docker build -t ammar/devops .
         docker tag ammar/devops:latest 654654483947.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
 
