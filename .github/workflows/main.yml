@@ -12,13 +12,7 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
-
-    - name: Deploy Code to Target Directory
-      run: |
-        sudo rm -rf /home/ubuntu/myapp
-        mkdir -p /home/ubuntu/myapp
-        rsync -av --exclude='.git' ./ /home/ubuntu/myapp/
-
+      
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v3
       with:
