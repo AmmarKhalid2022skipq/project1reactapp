@@ -1,4 +1,4 @@
-name: Build and Push Docker Image to AWS ECR
+name: Build and Push Docker Image to AWS ECR and deploy on ECS
 
 on:
   push:
