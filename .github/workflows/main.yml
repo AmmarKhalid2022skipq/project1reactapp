@@ -43,7 +43,7 @@ jobs:
           container-name: ammar-devops-container
           image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
 
-      - name: Deploy to Amazon ECS (Fargate)
+      - name: Deploy to Amazon ECS Fargate
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           cluster: my-cluster
