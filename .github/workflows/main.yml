@@ -35,3 +35,17 @@ jobs:
       - name: Push Docker image to AWS ECR
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
+      - name: Update ECS Task Definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: ammar-devops-container
+          image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/ammar/devops:latest
+
+      - name: Deploy to Amazon ECS (Fargate)
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          cluster: my-cluster
+          service: my-service
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
