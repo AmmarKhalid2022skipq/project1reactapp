@@ -27,7 +27,7 @@ jobs:
     - name: Build Docker image
       run: |
 
-        sudo docker build -t ammar/devops -f myapp/Dockerfile myapp/
+        sudo docker build -t ammar/devops .
 
     - name: Push image to Amazon ECR
       run: |
